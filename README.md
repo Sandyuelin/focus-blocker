@@ -1,32 +1,30 @@
 # focus-blocker
 
-在 Mac 上屏蔽 TikTok 和 Instagram 网站的小脚本。它们把这些网站的域名写进 `/etc/hosts`，指向 `0.0.0.0`，所以 Safari、Chrome、Firefox 都打不开。
+Small macOS scripts that block TikTok and Instagram in every browser (Safari, Chrome, Firefox) by pointing their domains at `0.0.0.0` in `/etc/hosts`.
 
-Small macOS scripts that block TikTok and Instagram in every browser by pointing their domains at `0.0.0.0` in `/etc/hosts`.
-
-## 用法 / Usage
+## Usage
 
 ```bash
-sudo bash tiktok-blocker.sh block      # 开启屏蔽 / turn on
-bash tiktok-blocker.sh status          # 查看状态 / check
-sudo bash tiktok-blocker.sh unblock    # 解除屏蔽 / turn off
+sudo bash tiktok-blocker.sh block      # turn the block on
+bash tiktok-blocker.sh status          # check whether it's on
+sudo bash tiktok-blocker.sh unblock    # turn it off
 ```
 
-Instagram 用法一样，把 `tiktok-blocker.sh` 换成 `instagram-blocker.sh` 就行。
+Instagram works the same way with `instagram-blocker.sh`.
 
-开启后如果网站还能打开，退出浏览器再重新打开。
+If the site still loads after blocking, quit and reopen your browser.
 
-## 解除时要多一步
+## Unblocking takes a moment of thought
 
-解除屏蔽前，要一字不差地输入一句话，比如 `I choose to waste my time on TikTok`。多这一步，是为了让你在解除之前停下来想一想。
+To unblock, you have to type a phrase exactly, such as `I choose to waste my time on TikTok`. The extra step is a nudge to reconsider.
 
-## 工作原理
+## How it works
 
-- **block**：先把 `/etc/hosts` 备份到 `/etc/hosts.before-<name>-blocker`，再在文件末尾加一段带标记的屏蔽规则，然后清除 DNS 缓存。
-- **unblock**：只删掉脚本自己加的那一段，文件里的其他内容不动。
-- 两个脚本互不影响，可以同时开启，也可以单独解除。
+- **block** backs up `/etc/hosts` to `/etc/hosts.before-<name>-blocker`, appends a marked section of block rules, and flushes the DNS cache.
+- **unblock** removes only the section the script added and leaves the rest of the file alone.
+- The two scripts are independent: you can run both, or unblock one without touching the other.
 
-## 局限
+## Limitations
 
-- 只挡网站，挡不住手机上的 App。
-- 你自己随时都能解除。想要更难解除，可以用「屏幕使用时间」限制这些网站，再请朋友设置密码。
+- It only blocks the websites, not the phone apps.
+- You can always unblock it yourself. For something harder to undo, use Screen Time to restrict these sites and have a friend set the passcode.
