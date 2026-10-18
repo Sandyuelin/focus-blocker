@@ -1,30 +1,49 @@
 # focus-blocker
 
-Small macOS scripts that block TikTok and Instagram in every browser (Safari, Chrome, Firefox) by pointing their domains at `0.0.0.0` in `/etc/hosts`.
+A macOS script that blocks TikTok and Instagram in every browser (Safari, Chrome, Firefox) and makes them slow and annoying to unblock.
+
+- A background service puts the block back every minute, so editing `/etc/hosts` by hand doesn't stick.
+- Unblocking means writing down why, waiting 10 minutes, solving 5 puzzles in a row, and giving up your streak.
+- An unblock only lasts 10 minutes. After that, the block comes back by itself.
+
+## Install
+
+```bash
+sudo bash focus-blocker.sh install
+```
+
+This adds a `focus` command. macOS will show a "Background Items Added" notification, which is expected.
 
 ## Usage
 
 ```bash
-sudo bash tiktok-blocker.sh block      # turn the block on
-bash tiktok-blocker.sh status          # check whether it's on
-sudo bash tiktok-blocker.sh unblock    # turn it off
+focus status           # block status, streak, and your last few unblock reasons
+sudo focus unblock     # the hard way
+sudo focus relock      # done early? turn the block back on now
+sudo focus uninstall   # remove everything (same steps as unblock)
 ```
 
-Instagram works the same way with `instagram-blocker.sh`.
+If a site still loads right after blocking, quit and reopen your browser.
 
-If the site still loads after blocking, quit and reopen your browser.
+## How unblocking works
 
-## Unblocking takes a moment of thought
+1. You see your current streak and are told that unblocking resets it.
+2. You write what exactly you need to check. This goes into a log that `focus status` shows.
+3. You wait 10 minutes. Most urges fade before the timer ends.
+4. You solve 5 puzzles in a row with no calculator: multiplications and words typed backwards. One mistake gives you a new set.
+5. You type `I am giving up my N-day streak`.
 
-To unblock, you have to type a phrase exactly, such as `I choose to waste my time on TikTok`. The extra step is a nudge to reconsider.
+Press Ctrl-C at any point to stop and keep your streak.
+
+You can change the wait, the number of puzzles and the pass length at the top of the script before installing.
 
 ## How it works
 
-- **block** backs up `/etc/hosts` to `/etc/hosts.before-<name>-blocker`, appends a marked section of block rules, and flushes the DNS cache.
-- **unblock** removes only the section the script added and leaves the rest of the file alone.
-- The two scripts are independent: you can run both, or unblock one without touching the other.
+- Blocked domains point at `0.0.0.0` in a marked section of `/etc/hosts`.
+- A LaunchDaemon (`com.focus-blocker.enforce`) runs every 60 seconds. It restores the section unless an unblock pass is active.
+- The installed copy, the pass and the streak live in `/Library/Application Support/focus-blocker`, owned by root. Commands always run through that copy, so editing another copy of the script doesn't skip the steps.
 
 ## Limitations
 
-- It only blocks the websites, not the phone apps.
-- You can always unblock it yourself. For something harder to undo, use Screen Time to restrict these sites and have a friend set the passcode.
+- It only blocks the websites, not the phone apps. On your phone, use Screen Time and have a friend set the passcode.
+- An admin can always get around it. The point is to make giving in slow, not impossible.
